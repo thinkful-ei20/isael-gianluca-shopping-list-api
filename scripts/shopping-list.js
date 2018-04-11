@@ -33,7 +33,11 @@ const shoppingList = (function(){
     return items.join('');
   }
   
-  
+  function generateErrorMessage(errorMessage){
+    $('.error').html(errorMessage);
+  }
+
+
   function render() {
     
     // Filter item list if store prop is true by item.checked === false
@@ -62,18 +66,15 @@ const shoppingList = (function(){
       const newItemName = $('.js-shopping-list-entry').val();
       $('.js-shopping-list-entry').val('');
       api.createItem(newItemName, (response) => {
-        if(response.status === 400) {
-          console.log(response);
-          store.setError(response.statusMessage);
-          console.log(store.errorMessage);
-          render();
-        } else {
-          store.addItem(response);
-          render();
-        }
+        console.log(response);
+        api.checkStatus(response);
+        generateErrorMessage(store.errorMessage);
+        store.addItem(response);
+        render();
+        
       });
     });
-  };
+  }
   
   function getItemIdFromElement(item) {
     return $(item)
@@ -84,7 +85,7 @@ const shoppingList = (function(){
   function handleItemCheckClicked() {
     $('.js-shopping-list').on('click', '.js-item-toggle', event => {
       const id = getItemIdFromElement(event.currentTarget);
-      const checkState = {checked: !store.findById(id).checked}
+      const checkState = {checked: !store.findById(id).checked};
       api.updateItem(id, checkState, (response) => {
         store.findAndUpdate(id, checkState);
         render();

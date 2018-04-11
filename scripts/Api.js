@@ -38,9 +38,9 @@ const api = (function(){
       data: JSON.stringify(updateData),
       success: callback,
       error: callback,
-    }
+    };
     $.ajax(options);
-  }
+  };
 
   const deleteItem = function(id, callback) {
     const options = {
@@ -49,14 +49,19 @@ const api = (function(){
       contentType: 'application/json',
       success: callback,
       error: callback,
-    }
+    };
     $.ajax(options);
-  }
+  };
+
+  const checkStatus = function(response){
+    if(response.status) store.setError(response.responseJSON.message);
+  };
 
   return {
     getItems,
     createItem,
     updateItem,
     deleteItem,
+    checkStatus,
   };
 }());
