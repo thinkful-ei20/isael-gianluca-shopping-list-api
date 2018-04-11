@@ -28,8 +28,20 @@ const api = (function(){
     $.ajax(options);
   };
 
+  const updateItem = function(id, updateData, callback) {
+    const options = {
+      url: `${BASE_URL}/items/${id}`,
+      method: 'PATCH',
+      contentType: 'application/json',
+      data: JSON.stringify(updateData),
+      success: callback,
+    }
+    $.ajax(options);
+  }
+
   return {
     getItems,
     createItem,
+    updateItem,
   };
 }());
