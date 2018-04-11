@@ -27,7 +27,6 @@ const shoppingList = (function(){
       </li>`;
   }
   
-  
   function generateShoppingItemsString(shoppingList) {
     const items = shoppingList.map((item) => generateItemElement(item));
     return items.join('');
@@ -36,7 +35,6 @@ const shoppingList = (function(){
   function generateErrorMessage(errorMessage){
     $('.error').html(errorMessage);
   }
-
 
   function render() {
     
@@ -50,7 +48,10 @@ const shoppingList = (function(){
     if (store.searchTerm) {
       items = store.items.filter(item => item.name.includes(store.searchTerm));
     }
-  
+
+    if(store.errorMessage !== '') {
+      generateErrorMessage(store.errorMessage);
+    }
     // render the shopping list in the DOM
     console.log('`render` ran');
     const shoppingListItemsString = generateShoppingItemsString(items);
@@ -66,12 +67,12 @@ const shoppingList = (function(){
       const newItemName = $('.js-shopping-list-entry').val();
       $('.js-shopping-list-entry').val('');
       api.createItem(newItemName, (response) => {
-        console.log(response);
-        api.checkStatus(response);
-        generateErrorMessage(store.errorMessage);
-        store.addItem(response);
+        if(response.status) {
+          store.setError(response.responseJSON.message);
+        } else {
+          store.addItem(response);
+        }
         render();
-        
       });
     });
   }
@@ -87,7 +88,11 @@ const shoppingList = (function(){
       const id = getItemIdFromElement(event.currentTarget);
       const checkState = {checked: !store.findById(id).checked};
       api.updateItem(id, checkState, (response) => {
-        store.findAndUpdate(id, checkState);
+        if(response.status) {
+          store.setError(response.responseJSON.message);
+        } else {
+          store.findAndUpdate(id, checkState);
+        }
         render();
       });
     });
@@ -100,7 +105,11 @@ const shoppingList = (function(){
       const id = getItemIdFromElement(event.currentTarget);
       // delete the item
       api.deleteItem(id, (response) => {
-        store.findAndDelete(id);
+        if(response.status) {
+          store.setError(response.responseJSON.message);
+        } else {
+          store.findAndDelete(id, checkState);
+        }   
         render();
       });
     });
@@ -112,7 +121,11 @@ const shoppingList = (function(){
       const id = getItemIdFromElement(event.currentTarget);
       const itemName = {name:$(event.currentTarget).find('.shopping-item').val()};
       api.updateItem(id, itemName, (response) => {
-        store.findAndUpdate(id, itemName);
+        if(response.status) {
+          store.setError(response.responseJSON.message);
+        } else {
+          store.findAndUpdate(id, itemName);
+        }    
         render();
       });
     });
@@ -135,7 +148,7 @@ const shoppingList = (function(){
 
   function handleErrorMessage() {
     $('.error').on('click', '.error-close', event => {
-
+      
     });
   }
 

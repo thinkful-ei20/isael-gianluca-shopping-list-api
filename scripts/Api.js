@@ -53,15 +53,10 @@ const api = (function(){
     $.ajax(options);
   };
 
-  const checkStatus = function(response){
-    if(response.status) store.setError(response.responseJSON.message);
-  };
-
   return {
     getItems,
     createItem,
     updateItem,
     deleteItem,
-    checkStatus,
   };
 }());
