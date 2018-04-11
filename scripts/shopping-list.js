@@ -73,11 +73,7 @@ const shoppingList = (function(){
       const newItemName = $('.js-shopping-list-entry').val();
       $('.js-shopping-list-entry').val('');
       api.createItem(newItemName, (response) => {
-        if(response.status) {
-          store.setError(response.responseJSON.message);
-        } else {
-          store.addItem(response);
-        }
+        response.status ? store.setError(response.responseJSON.message) : store.addItem(response);
         render();
       });
     });
@@ -88,11 +84,7 @@ const shoppingList = (function(){
       const id = getItemIdFromElement(event.currentTarget);
       const checkState = {checked: !store.findById(id).checked};
       api.updateItem(id, checkState, (response) => {
-        if(response.status) {
-          store.setError(response.responseJSON.message);
-        } else {
-          store.findAndUpdate(id, checkState);
-        }
+        response.status ? store.setError(response.responseJSON.message) : store.findAndUpdate(id, checkState);
         render();
       });
     });
@@ -105,11 +97,7 @@ const shoppingList = (function(){
       const id = getItemIdFromElement(event.currentTarget);
       // delete the item
       api.deleteItem(id, (response) => {
-        if(response.status) {
-          store.setError(response.responseJSON.message);
-        } else {
-          store.findAndDelete(id);
-        }   
+        response.status ? store.setError(response.responseJSON.message) : store.findAndDelete(id);
         render();
       });
     });
@@ -121,11 +109,7 @@ const shoppingList = (function(){
       const id = getItemIdFromElement(event.currentTarget);
       const itemName = {name:$(event.currentTarget).find('.shopping-item').val()};
       api.updateItem(id, itemName, (response) => {
-        if(response.status) {
-          store.setError(response.responseJSON.message);
-        } else {
-          store.findAndUpdate(id, itemName);
-        }    
+        response.status ? store.setError(response.responseJSON.message) : store.findAndUpdate(id, itemName);
         render();
       });
     });
