@@ -50,7 +50,7 @@ button:hover {
   text-decoration: line-through;
 }
 
-.error {
+.error-button {
   background-color:lightcoral;
   padding: 20px;
   border: 1px solid red;

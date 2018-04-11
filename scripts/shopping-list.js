@@ -12,7 +12,6 @@ const shoppingList = (function(){
         </form>
       `;
     }
-  
     return `
       <li class="js-item-element" data-item-id="${item.id}">
         ${itemTitle}
@@ -33,7 +32,7 @@ const shoppingList = (function(){
   }
   
   function generateErrorMessage(errorMessage){
-    $('.error').html(errorMessage);
+    return `<button type="button" class="error-button">${errorMessage}</button>`;
   }
 
   function render() {
@@ -50,7 +49,9 @@ const shoppingList = (function(){
     }
 
     if(store.errorMessage !== '') {
-      generateErrorMessage(store.errorMessage);
+      $('.error').html(generateErrorMessage(store.errorMessage));
+    } else {
+      $('.error').html('');
     }
     // render the shopping list in the DOM
     console.log('`render` ran');
@@ -60,6 +61,11 @@ const shoppingList = (function(){
     $('.js-shopping-list').html(shoppingListItemsString);
   }
   
+  function getItemIdFromElement(item) {
+    return $(item)
+      .closest('.js-item-element')
+      .data('item-id');
+  }
   
   function handleNewItemSubmit() {
     $('#js-shopping-list-form').submit(function (event) {
@@ -75,12 +81,6 @@ const shoppingList = (function(){
         render();
       });
     });
-  }
-  
-  function getItemIdFromElement(item) {
-    return $(item)
-      .closest('.js-item-element')
-      .data('item-id');
   }
   
   function handleItemCheckClicked() {
@@ -108,7 +108,7 @@ const shoppingList = (function(){
         if(response.status) {
           store.setError(response.responseJSON.message);
         } else {
-          store.findAndDelete(id, checkState);
+          store.findAndDelete(id);
         }   
         render();
       });
@@ -147,8 +147,9 @@ const shoppingList = (function(){
   }
 
   function handleErrorMessage() {
-    $('.error').on('click', '.error-close', event => {
-      
+    $('.error').on('click', '.error-button', event => {
+      store.setError('');
+      render();
     });
   }
 
