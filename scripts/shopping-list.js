@@ -35,6 +35,7 @@ const shoppingList = (function(){
   
   
   function render() {
+    
     // Filter item list if store prop is true by item.checked === false
     let items = store.items;
     if (store.hideCheckedItems) {
@@ -61,11 +62,18 @@ const shoppingList = (function(){
       const newItemName = $('.js-shopping-list-entry').val();
       $('.js-shopping-list-entry').val('');
       api.createItem(newItemName, (response) => {
-        store.addItem(response);
-        render();
+        if(response.status === 400) {
+          console.log(response);
+          store.setError(response.statusMessage);
+          console.log(store.errorMessage);
+          render();
+        } else {
+          store.addItem(response);
+          render();
+        }
       });
     });
-  }
+  };
   
   function getItemIdFromElement(item) {
     return $(item)
@@ -76,8 +84,11 @@ const shoppingList = (function(){
   function handleItemCheckClicked() {
     $('.js-shopping-list').on('click', '.js-item-toggle', event => {
       const id = getItemIdFromElement(event.currentTarget);
-      store.findAndToggleChecked(id);
-      render();
+      const checkState = {checked: !store.findById(id).checked}
+      api.updateItem(id, checkState, (response) => {
+        store.findAndUpdate(id, checkState);
+        render();
+      });
     });
   }
   
@@ -87,9 +98,10 @@ const shoppingList = (function(){
       // get the index of the item in store.items
       const id = getItemIdFromElement(event.currentTarget);
       // delete the item
-      store.findAndDelete(id);
-      // render the updated shopping list
-      render();
+      api.deleteItem(id, (response) => {
+        store.findAndDelete(id);
+        render();
+      });
     });
   }
   
@@ -97,9 +109,11 @@ const shoppingList = (function(){
     $('.js-shopping-list').on('submit', '#js-edit-item', event => {
       event.preventDefault();
       const id = getItemIdFromElement(event.currentTarget);
-      const itemName = $(event.currentTarget).find('.shopping-item').val();
-      store.findAndUpdateName(id, itemName);
-      render();
+      const itemName = {name:$(event.currentTarget).find('.shopping-item').val()};
+      api.updateItem(id, itemName, (response) => {
+        store.findAndUpdate(id, itemName);
+        render();
+      });
     });
   }
   
@@ -117,14 +131,29 @@ const shoppingList = (function(){
       render();
     });
   }
+
+  function handleErrorMessage() {
+    $('.error').on('click', '.error-close', event => {
+
+    });
+  }
+
+  function initializeApp() {
+    api.getItems((items) => {
+      items.forEach((item) => store.addItem(item));
+      render();
+    });
+  }
   
   function bindEventListeners() {
+    initializeApp();
     handleNewItemSubmit();
     handleItemCheckClicked();
     handleDeleteItemClicked();
     handleEditShoppingItemSubmit();
     handleToggleFilterClick();
     handleShoppingListSearch();
+    handleErrorMessage();
   }
 
   // This object contains the only exposed methods from this module:

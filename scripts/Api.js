@@ -8,6 +8,7 @@ const api = (function(){
       method: 'GET',
       contentType: 'application/json',
       success: callback,
+      error: callback,
     };
     $.ajax(options);
   };
@@ -23,6 +24,7 @@ const api = (function(){
       contentType: 'application/json',
       data: newItem,
       success: callback,
+      error: callback,
     };
 
     $.ajax(options);
@@ -35,6 +37,18 @@ const api = (function(){
       contentType: 'application/json',
       data: JSON.stringify(updateData),
       success: callback,
+      error: callback,
+    }
+    $.ajax(options);
+  }
+
+  const deleteItem = function(id, callback) {
+    const options = {
+      url: `${BASE_URL}/items/${id}`,
+      method: 'DELETE',
+      contentType: 'application/json',
+      success: callback,
+      error: callback,
     }
     $.ajax(options);
   }
@@ -43,5 +57,6 @@ const api = (function(){
     getItems,
     createItem,
     updateItem,
+    deleteItem,
   };
 }());
