@@ -1,62 +1,59 @@
-'use strict';
+
 const api = (function(){
-  const BASE_URL = 'https://thinkful-list-api.herokuapp.com/isael-gianluca';
+	const BASE_URL = 'https://thinkful-list-api.herokuapp.com/isael-gianluca';
 
-  const getItems = function(callback){
-    const options = {
-      url: `${BASE_URL}/items`,
-      method: 'GET',
-      contentType: 'application/json',
-      success: callback,
-      error: callback,
-    };
-    $.ajax(options);
-  };
+	const getItems = function(success, error){
+		const options = {
+			url: `${BASE_URL}/items`,
+			method: 'GET',
+			contentType: 'application/json',
+			success: success,
+			error: error,
+		};
+		$.ajax(options);
+	};
 
-  const createItem = function(name, callback){
-    let newItem = {name: name};
+	const createItem = function(name, success, error){
 
-    newItem = JSON.stringify(newItem);
+		const options = {
+			url: `${BASE_URL}/items`,
+			method: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify({name: name}),
+			success: success,
+			error: error,
+		};
 
-    const options = {
-      url: `${BASE_URL}/items`,
-      method: 'POST',
-      contentType: 'application/json',
-      data: newItem,
-      success: callback,
-      error: callback,
-    };
+		$.ajax(options);
+	};
 
-    $.ajax(options);
-  };
+	const updateItem = function(id, updateData, success, error) {
+		const options = {
+			url: `${BASE_URL}/items/${id}`,
+			method: 'PATCH',
+			contentType: 'application/json',
+			data: JSON.stringify(updateData),
+			success: success,
+			error: error,
+		};
+		$.ajax(options);
+	};
 
-  const updateItem = function(id, updateData, callback) {
-    const options = {
-      url: `${BASE_URL}/items/${id}`,
-      method: 'PATCH',
-      contentType: 'application/json',
-      data: JSON.stringify(updateData),
-      success: callback,
-      error: callback,
-    };
-    $.ajax(options);
-  };
+	const deleteItem = function(id, success, error) {
+		const options = {
+			url: `${BASE_URL}/items/${id}`,
+			method: 'DELETE',
+			contentType: 'application/json',
+			success: success,
+			error: error,
+		};
+		$.ajax(options);
+	};
 
-  const deleteItem = function(id, callback) {
-    const options = {
-      url: `${BASE_URL}/items/${id}`,
-      method: 'DELETE',
-      contentType: 'application/json',
-      success: callback,
-      error: callback,
-    };
-    $.ajax(options);
-  };
-
-  return {
-    getItems,
-    createItem,
-    updateItem,
-    deleteItem,
-  };
+	return {
+		getItems,
+		createItem,
+		updateItem,
+		deleteItem,
+	};
 }());
