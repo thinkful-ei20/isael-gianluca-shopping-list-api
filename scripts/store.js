@@ -1,4 +1,4 @@
-/* global Item, api */
+/* global api */
 
 // eslint-disable-next-line no-unused-vars
 const store = (function(){
